@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<package version="1.0">
+ <name>Crypt_Blowfish</name>
+ <summary>Allows for quick two-way blowfish encryption without requiring the Mcrypt PHP extension.</summary>
+ <description>
+  This package allows you to prefore two-way blowfish on the fly using only PHP. This package does not require the Mcrypt PHP extension to work.
+ </description>
+ <license>PHP</license>
+ <maintainers>
+  <maintainer>
+   <user>mfonda</user>
+   <name>Matthew Fonda</name>
+   <email>mfonda@php.net</email>
+   <role>lead</role>
+  </maintainer>
+ </maintainers>
+ <release>
+  <version>0.7.0</version>
+  <date>2005-02-22</date>
+  <state>beta</state>
+  <notes>
+   This is the initial release.
+  </notes>
+  <filelist>
+   <dir name="/" baseinstalldir="Crypt">
+    <file role="php">Blowfish.php</file>
+    <dir name="Blowfish" role="php">
+     <file>DefaultKey.php</file>
+    </dir>
+   </dir>
+  </filelist>
+ </release>
+</package>
