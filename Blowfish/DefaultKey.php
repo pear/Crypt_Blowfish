@@ -35,7 +35,7 @@
  * @copyright  2005 Matthew Fonda
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @link       http://pear.php.net/package/Crypt_Blowfish
- * @version    0.7.0
+ * @version    @package_version@
  * @access     public
  */
 class Crypt_Blowfish_DefaultKey

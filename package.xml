@@ -15,12 +15,13 @@
   </maintainer>
  </maintainers>
  <release>
-  <version>0.7.0</version>
-  <date>2005-02-22</date>
+  <version>0.8.0</version>
+  <date>2005-03-03</date>
   <state>beta</state>
-  <notes>
-   This is the initial release.
-  </notes>
+  <notes>* Increased encryption and decryption speed
+* init() method is now private
+* Removed unnesessary defines
+* Deprecated isReady() method</notes>
   <filelist>
    <dir name="/" baseinstalldir="Crypt">
     <file role="php">Blowfish.php</file>
@@ -30,4 +31,21 @@
    </dir>
   </filelist>
  </release>
+   <changelog>
+    <release>
+     <version>0.8.0</version>
+     <date>2005-03-03</date>
+     <state>beta</state>
+     <notes>* Increased encryption and decryption speed
+* init() method is now private
+* Removed unnesessary defines
+* Deprecated isReady() method</notes>
+    </release>
+     <release>
+       <version>0.7.0</version>
+       <date>2005-02-22</date>
+       <state>beta</state>
+       <notes>This is the initial release.</notes>
+    </release>
+  </changelog>
 </package>

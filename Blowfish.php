@@ -27,31 +27,7 @@
 
 
 require_once 'PEAR.php';
-
-/**
- * Number of loops
- */
-define('CRYPT_BLOWFISH_N', 16);
-
-/**
- * Error if key is invalid
- */
-define('CRYPT_BLOWFISH_ERROR_SHORT' , 'Key must be greater than or equal to 4 characters');
-
-/**
- * Error if key is invalid
- */
-define('CRYPT_BLOWFISH_ERROR_LONG' , 'Key must be less than or equal to 56 characters');
-
-/**
- * Error if key is invalid
- */
-define('CRYPT_BLOWFISH_ERROR_INVALID' , 'Key must be a divisible by four');
-
-/**
- * Error if blowfish object has not been properly initialized
- */
-define('CRYPT_BLOWFISH_ERROR_NOT_READY' , 'Blowfish object not properly initialized');
+require_once 'Blowfish/DefaultKey.php';
 
 
 /**
@@ -69,7 +45,7 @@ define('CRYPT_BLOWFISH_ERROR_NOT_READY' , 'Blowfish object not properly initiali
  * @copyright  2005 Matthew Fonda
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @link       http://pear.php.net/package/Crypt_Blowfish
- * @version    0.7.0
+ * @version    @package_version@
  * @access     public
  */
 class Crypt_Blowfish
@@ -90,14 +66,7 @@ class Crypt_Blowfish
      * @access private
      */
     var $_S = array();
-    
-    
-    /**
-     * @var bool
-     * @access private
-     */
-    var $_ready = false;
-    
+
     
     /**
      * Crypt_Blowfish Constructor
@@ -109,46 +78,45 @@ class Crypt_Blowfish
      */
     function Crypt_Blowfish($key = null)
     {
-        if (isset($key)) {
-            $this->setKey($key);
-        } else {
-            $this->init();
-        }
+        $this->setKey($key);
     }
     
+    /**
+     * Deprecated isReady method
+     *
+     * @return bool
+     * @access public
+     * @deprecated
+     */
+    function isReady()
+    {
+        return true;
+    }
+    
+    /**
+     * Deprecated init method - init is now a private
+     * method and has been replaced with _init
+     *
+     * @return bool
+     * @access public
+     * @deprecated
+     * @see Crypt_Blowfish::_init()
+     */
+    function init()
+    {
+        $this->_init();
+    }
     
     /**
      * Initializes the Crypt_Blowfish object
      *
-     * @access public
-     * @return bool
+     * @access private
      */
-    function init()
+    function _init()
     {
-        require_once 'Blowfish/DefaultKey.php';
-        
         $defaults = new Crypt_Blowfish_DefaultKey();
-        
         $this->_P = $defaults->P;
-        
         $this->_S = $defaults->S;
-        
-        $this->_ready = true;
-        
-        return true;
-    }
-    
-    
-    /**
-     * Function to check if the Crypt_Blowfish object is
-     * ready to be used or not
-     *
-     * @access public
-     * @return bool
-     */
-    function isReady()
-    {
-        return $this->_ready;
     }
             
     /**
@@ -160,7 +128,7 @@ class Crypt_Blowfish
      */
     function _encipher(&$Xl, &$Xr)
     {
-        for ($i = 0; $i < CRYPT_BLOWFISH_N; $i++) {
+        for ($i = 0; $i < 16; $i++) {
             $temp = $Xl ^ $this->_P[$i];
             $Xl = ((($this->_S[0][($temp>>24) & 255] +
                             $this->_S[1][($temp>>16) & 255]) ^
@@ -168,8 +136,8 @@ class Crypt_Blowfish
                             $this->_S[3][$temp & 255]) ^ $Xr;
             $Xr = $temp;
         }
-        $Xr = $Xl ^ $this->_P[CRYPT_BLOWFISH_N];
-        $Xl = $temp ^ $this->_P[CRYPT_BLOWFISH_N+1];
+        $Xr = $Xl ^ $this->_P[16];
+        $Xl = $temp ^ $this->_P[16+1];
     }
     
     
@@ -182,7 +150,7 @@ class Crypt_Blowfish
      */
     function _decipher(&$Xl, &$Xr)
     {
-        for ($i = CRYPT_BLOWFISH_N + 1; $i > 1; $i--) {
+        for ($i = 16 + 1; $i > 1; $i--) {
             $temp = $Xl ^ $this->_P[$i];
             $Xl = ((($this->_S[0][ ($temp>>24) & 255 ] +
                             $this->_S[1][($temp>>16) & 255]) ^
@@ -204,10 +172,6 @@ class Crypt_Blowfish
      */
     function encrypt($plainText)
     {
-        if (!$this->isReady()) {
-            return PEAR::raiseError(CRYPT_BLOWFISH_ERROR_NOT_READY);
-        }
-        
         $plainText = (String)$plainText;
         $cipherText = '';
         $len = strlen($plainText);
@@ -217,7 +181,6 @@ class Crypt_Blowfish
             $this->_encipher($Xl, $Xr);
             $cipherText .= pack("N2", $Xl, $Xr);
         }
-
         return $cipherText;
     }
     
@@ -231,10 +194,6 @@ class Crypt_Blowfish
      */
     function decrypt($cipherText)
     {
-        if (!$this->isReady()) {
-            return PEAR::raiseError(CRYPT_BLOWFISH_ERROR_NOT_READY);
-        }
-        
         $cipherText = (String)$cipherText;
         $plainText = '';
         $len = strlen($cipherText);
@@ -244,8 +203,7 @@ class Crypt_Blowfish
             $this->_decipher($Xl, $Xr);
             $plainText .= pack("N2", $Xl, $Xr);
         }
-        
-        return trim($plainText);
+        return $plainText;
     }
     
     
@@ -253,7 +211,9 @@ class Crypt_Blowfish
      * Sets the secret key
      * The key must be greater than or equal to 4 characters
      * in length, and less than or equal to 56 characters in
-     * length. It must also be divisible by four.
+     * length. It must also be divisible by four. If the optional
+     * key parameter is not passed, it will set the key back to
+     * the default key.
      *
      * @param string $key
      * @return bool  Returns true on success, PEAR_Error on failure
@@ -262,30 +222,25 @@ class Crypt_Blowfish
     function setKey($key = null)
     {
         if (!isset($key)) {
-            $this->init();
+            $this->_init();
             return true;
         }
         
         $key = (String)$key;
         $len = strlen($key);
         
-        if ($len < 4) {
-            return PEAR::raiseError(CRYPT_BLOWFISH_ERROR_SHORT);
+        if ($len < 4 || $len > 56 || $len % 4) {
+            return PEAR::raiseError('Invalid key provided. Keys must be between 4 and 56 characters long and divisible by 4', 1, PEAR_ERROR_DIE);
         }
         
-        if ($len > 56 ) {
-            return PEAR::raiseError(CRYPT_BLOWFISH_ERROR_LONG);
-        }
-        
-        if ($len % 4) {
-            return PEAR::raiseError(CRYPT_BLOWFISH_ERROR_INVALID);
-        }
-        
-        $this->init();
+        $this->_init();
         
         $k = 0;
-        for ($i = 0; $i < CRYPT_BLOWFISH_N + 2; $i++) {
-            $data = 0;
+        $data = 0;
+        $datal = 0;
+        $datar = 0;
+        
+        for ($i = 0; $i < 18; $i++) {
             for ($j = 4; $j > 0; $j--) {
                     $data = $data << 8 | ord($key{$k});
                     $k = ($k+1) % $len;
@@ -293,33 +248,15 @@ class Crypt_Blowfish
             $this->_P[$i] ^= $data;
         }
         
-        $datal = 0;
-        $datar = 0;
-        
-        for ($i = 0; $i <= CRYPT_BLOWFISH_N; $i += 2) {
+        for ($i = 0; $i < 15; $i += 2) {
             $this->_encipher($datal, $datar);
             $this->_P[$i] = $datal;
             $this->_P[$i+1] = $datar;
-        }
-        for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
-            $this->_S[0][$i] = $datal;
-            $this->_S[0][$i+1] = $datar;
-        }
-        for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
-            $this->_S[1][$i] = $datal;
-            $this->_S[1][$i+1] = $datar;
-        }
-        for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
-            $this->_S[2][$i] = $datal;
-            $this->_S[2][$i+1] = $datar;
-        }
-        for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
-            $this->_S[3][$i] = $datal;
-            $this->_S[3][$i+1] = $datar;
+            for ($j = 0; $j < 3; $j++) {
+                $this->_encipher($datal, $datar);
+                $this->_S[$j][$i] = $datal;
+                $this->_S[$j][$i+1] = $datar;
+            }
         }
         
         return true;
