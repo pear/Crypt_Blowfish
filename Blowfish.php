@@ -240,7 +240,8 @@ class Crypt_Blowfish
         $datal = 0;
         $datar = 0;
         
-        for ($i = 0; $i < 18; $i++) {
+        for ($i = 0; $i < 16 + 2; $i++) {
+            $data = 0;
             for ($j = 4; $j > 0; $j--) {
                     $data = $data << 8 | ord($key{$k});
                     $k = ($k+1) % $len;
@@ -248,15 +249,30 @@ class Crypt_Blowfish
             $this->_P[$i] ^= $data;
         }
         
-        for ($i = 0; $i < 15; $i += 2) {
+        for ($i = 0; $i <= 16; $i += 2) {
             $this->_encipher($datal, $datar);
             $this->_P[$i] = $datal;
             $this->_P[$i+1] = $datar;
-            for ($j = 0; $j < 3; $j++) {
-                $this->_encipher($datal, $datar);
-                $this->_S[$j][$i] = $datal;
-                $this->_S[$j][$i+1] = $datar;
-            }
+        }
+        for ($i = 0; $i < 256; $i += 2) {
+            $this->_encipher($datal, $datar);
+            $this->_S[0][$i] = $datal;
+            $this->_S[0][$i+1] = $datar;
+        }
+        for ($i = 0; $i < 256; $i += 2) {
+            $this->_encipher($datal, $datar);
+            $this->_S[1][$i] = $datal;
+            $this->_S[1][$i+1] = $datar;
+        }
+        for ($i = 0; $i < 256; $i += 2) {
+            $this->_encipher($datal, $datar);
+            $this->_S[2][$i] = $datal;
+            $this->_S[2][$i+1] = $datar;
+        }
+        for ($i = 0; $i < 256; $i += 2) {
+            $this->_encipher($datal, $datar);
+            $this->_S[3][$i] = $datal;
+            $this->_S[3][$i+1] = $datar;
         }
         
         return true;
