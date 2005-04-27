@@ -152,7 +152,7 @@ class Crypt_Blowfish
     {
         for ($i = 16 + 1; $i > 1; $i--) {
             $temp = $Xl ^ $this->_P[$i];
-            $Xl = ((($this->_S[0][ ($temp>>24) & 255 ] +
+            $Xl = ((($this->_S[0][($temp>>24) & 255] +
                             $this->_S[1][($temp>>16) & 255]) ^
                             $this->_S[2][($temp>>8) & 255]) +
                             $this->_S[3][$temp & 255]) ^ $Xr;
@@ -172,7 +172,10 @@ class Crypt_Blowfish
      */
     function encrypt($plainText)
     {
-        $plainText = (String)$plainText;
+        if (!is_string($plainText)) {
+            PEAR::raiseError('Plain text must be a string', 0, PEAR_ERROR_DIE);
+        }
+
         $cipherText = '';
         $len = strlen($plainText);
         $plainText .= str_repeat(chr(0),(8 - ($len%8))%8);
@@ -194,7 +197,10 @@ class Crypt_Blowfish
      */
     function decrypt($cipherText)
     {
-        $cipherText = (String)$cipherText;
+        if (!is_string($cipherText)) {
+            PEAR::raiseError('Chiper text must be a string', 1, PEAR_ERROR_DIE);
+        }
+
         $plainText = '';
         $len = strlen($cipherText);
         $cipherText .= str_repeat(chr(0),(8 - ($len%8))%8);
@@ -221,16 +227,19 @@ class Crypt_Blowfish
      */
     function setKey($key = null)
     {
-        if (!isset($key)) {
+        if (empty($key)) {
             $this->_init();
             return true;
         }
         
-        $key = (String)$key;
+        if (!is_string($key)) {
+            PEAR::raiseError('Key must be a string', 2, PEAR_ERROR_DIE);
+        }
+
         $len = strlen($key);
-        
-        if ($len < 4 || $len > 56 || $len % 4) {
-            return PEAR::raiseError('Invalid key provided. Keys must be between 4 and 56 characters long and divisible by 4', 1, PEAR_ERROR_DIE);
+
+        if ($len > 56) {
+            PEAR::raiseError('Key must be less than 56 characters. Supplied key length: ' . $len, 3, PEAR_ERROR_DIE);
         }
         
         $this->_init();
