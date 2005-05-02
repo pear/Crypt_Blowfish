@@ -12,7 +12,7 @@ $null = "\0\0\0\0\0\0\0\0";
 $vectors = file(dirname(__FILE__) . "/vectors.txt");
 
 require_once 'Crypt/Blowfish.php';
-$b = new Crypt_Blowfish();
+$b = new Crypt_Blowfish('key');
 
 foreach($vectors as $data) {
     $data = trim($data);
