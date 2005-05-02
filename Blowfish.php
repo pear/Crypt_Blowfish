@@ -95,7 +95,7 @@ class Crypt_Blowfish
     {
         if (extension_loaded('mcrypt')) {
             $this->_td = mcrypt_module_open(MCRYPT_BLOWFISH, '', 'ecb', '');
-            $this->_iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($this->_td), MCRYPT_RAND);
+            $this->_iv = mcrypt_create_iv(8, MCRYPT_RAND);
         }
         $this->setKey($key);
     }
