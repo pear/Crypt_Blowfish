@@ -27,7 +27,6 @@
 
 
 require_once 'PEAR.php';
-require_once 'Blowfish/DefaultKey.php';
 
 
 /**
@@ -67,6 +66,22 @@ class Crypt_Blowfish
      */
     var $_S = array();
 
+    /**
+     * Mcrypt td resource
+     *
+     * @var resource
+     * @access private
+     */
+    var $_td = null;
+
+    /**
+     * Initialization vector
+     *
+     * @var string
+     * @access private
+     */
+    var $_iv = null;
+
     
     /**
      * Crypt_Blowfish Constructor
@@ -78,6 +93,10 @@ class Crypt_Blowfish
      */
     function Crypt_Blowfish($key)
     {
+        if (extension_loaded('mcrypt')) {
+            $this->_td = mcrypt_module_open(MCRYPT_BLOWFISH, '', 'ecb', '');
+            $this->_iv = mcrypt_create_iv(mcrypt_enc_get_iv_size($this->_td), MCRYPT_RAND);
+        }
         $this->setKey($key);
     }
     
@@ -176,6 +195,10 @@ class Crypt_Blowfish
             PEAR::raiseError('Plain text must be a string', 0, PEAR_ERROR_DIE);
         }
 
+        if (extension_loaded('mcrypt')) {
+            return mcrypt_generic($this->_td, $plainText);
+        }
+
         $cipherText = '';
         $len = strlen($plainText);
         $plainText .= str_repeat(chr(0),(8 - ($len%8))%8);
@@ -199,6 +222,10 @@ class Crypt_Blowfish
     {
         if (!is_string($cipherText)) {
             PEAR::raiseError('Chiper text must be a string', 1, PEAR_ERROR_DIE);
+        }
+
+        if (extension_loaded('mcrypt')) {
+            return mdecrypt_generic($this->_td, $cipherText);
         }
 
         $plainText = '';
@@ -225,7 +252,7 @@ class Crypt_Blowfish
      * @return bool  Returns true on success, PEAR_Error on failure
      * @access public
      */
-    function setKey($key = null)
+    function setKey($key)
     {
         if (!is_string($key)) {
             PEAR::raiseError('Key must be a string', 2, PEAR_ERROR_DIE);
@@ -236,7 +263,13 @@ class Crypt_Blowfish
         if ($len > 56 || $len == 0) {
             PEAR::raiseError('Key must be less than 56 characters and non-zero. Supplied key length: ' . $len, 3, PEAR_ERROR_DIE);
         }
-        
+
+        if (extension_loaded('mcrypt')) {
+            mcrypt_generic_init($this->_td, $key, $this->_iv);
+            return true;
+        }
+
+        require_once 'Blowfish/DefaultKey.php';
         $this->_init();
         
         $k = 0;
