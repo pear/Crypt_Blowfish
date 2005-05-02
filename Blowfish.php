@@ -71,12 +71,12 @@ class Crypt_Blowfish
     /**
      * Crypt_Blowfish Constructor
      * Initializes the Crypt_Blowfish object, and gives a sets
-     * the secret key if one is provided
+     * the secret key
      *
      * @param string $key
      * @access public
      */
-    function Crypt_Blowfish($key = null)
+    function Crypt_Blowfish($key)
     {
         $this->setKey($key);
     }
@@ -227,19 +227,14 @@ class Crypt_Blowfish
      */
     function setKey($key = null)
     {
-        if (empty($key)) {
-            $this->_init();
-            return true;
-        }
-        
         if (!is_string($key)) {
             PEAR::raiseError('Key must be a string', 2, PEAR_ERROR_DIE);
         }
 
         $len = strlen($key);
 
-        if ($len > 56) {
-            PEAR::raiseError('Key must be less than 56 characters. Supplied key length: ' . $len, 3, PEAR_ERROR_DIE);
+        if ($len > 56 || $len == 0) {
+            PEAR::raiseError('Key must be less than 56 characters and non-zero. Supplied key length: ' . $len, 3, PEAR_ERROR_DIE);
         }
         
         $this->_init();
