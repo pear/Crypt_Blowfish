@@ -242,11 +242,8 @@ class Crypt_Blowfish
     
     /**
      * Sets the secret key
-     * The key must be greater than or equal to 4 characters
-     * in length, and less than or equal to 56 characters in
-     * length. It must also be divisible by four. If the optional
-     * key parameter is not passed, it will set the key back to
-     * the default key.
+     * The key must be non-zero, and less than or equal to
+     * 56 characters in length.
      *
      * @param string $key
      * @return bool  Returns true on success, PEAR_Error on failure
