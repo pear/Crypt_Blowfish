@@ -15,21 +15,31 @@
   </maintainer>
  </maintainers>
  <release>
-  <version>1.0.0</version>
-  <date>2005-04-26</date>
+  <version>1.0.1</version>
+  <date>2005-05-30</date>
   <state>stable</state>
-  <notes>Initial stable release</notes>
+  <notes>Uses mcrypt if available</notes>
   <filelist>
    <dir name="/" baseinstalldir="Crypt">
-    <file role="php">Blowfish.php</file>
-    <dir name="Blowfish" role="php">
-     <file>DefaultKey.php</file>
+    <file name="Blowfish.php" role="php"><replace from="@package_version@" to="version" type="package-info" /></file>
+    <dir name="Blowfish">
+     <file name="DefaultKey.php" role="php"><replace from="@package_version@" to="version" type="package-info" /></file>
+    </dir>
+    <dir name="tests">
+     <file role="test">blowfish.phpt</file>
+     <file role="test">vectors.txt</file>
     </dir>
    </dir>
   </filelist>
  </release>
   <changelog>
-   <release>
+    <release>
+     <version>1.0.1</version>
+     <date>2005-05-30</date>
+     <state>stable</state>
+     <notes>Uses mcrypt if available</notes>
+    </release>
+    <release>
      <version>1.0.0</version>
      <date>2005-04-26</date>
      <state>stable</state>
