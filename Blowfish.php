@@ -156,7 +156,7 @@ class Crypt_Blowfish
             $Xr = $temp;
         }
         $Xr = $Xl ^ $this->_P[16];
-        $Xl = $temp ^ $this->_P[16+1];
+        $Xl = $temp ^ $this->_P[17];
     }
     
     
@@ -169,7 +169,7 @@ class Crypt_Blowfish
      */
     function _decipher(&$Xl, &$Xr)
     {
-        for ($i = 16 + 1; $i > 1; $i--) {
+        for ($i = 17; $i > 1; $i--) {
             $temp = $Xl ^ $this->_P[$i];
             $Xl = ((($this->_S[0][($temp>>24) & 255] +
                             $this->_S[1][($temp>>16) & 255]) ^
@@ -274,7 +274,7 @@ class Crypt_Blowfish
         $datal = 0;
         $datar = 0;
         
-        for ($i = 0; $i < 16 + 2; $i++) {
+        for ($i = 0; $i < 18; $i++) {
             $data = 0;
             for ($j = 4; $j > 0; $j--) {
                     $data = $data << 8 | ord($key{$k});
