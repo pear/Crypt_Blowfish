@@ -84,6 +84,9 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
     /**
      * Encrypts a string
      *
+     * Value is padded with NUL characters prior to encryption. You may
+     * need to trim or cast the type when you decrypt.
+     *
      * @param string $plainText string of characters/bytes to encrypt
      * @return string|PEAR_Error Returns cipher text on success, PEAR_Error on failure
      * @access public
@@ -116,6 +119,9 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
 
     /**
      * Decrypts an encrypted string
+     *
+     * The value was padded with NUL characters when encrypted. You may
+     * need to trim the result or cast its type.
      *
      * @param string $cipherText
      * @return string|PEAR_Error Returns plain text on success, PEAR_Error on failure

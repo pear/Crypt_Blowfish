@@ -57,7 +57,13 @@ define('CRYPT_BLOWFISH_PHP',    3);
  * $encrypted = $bf->encrypt('this is some example plain text');
  * $bf->setKey('My secret key', $iv);
  * $plaintext = $bf->decrypt($encrypted);
- * echo "plain text: $plaintext";
+ * if (PEAR::isError($plaintext)) {
+ *     echo $plaintext->getMessage();
+ *     exit;
+ * }
+ * // Encrypted text is padded prior to encryption
+ * // so you may need to trim the decrypted result.
+ * echo 'plain text: ' . trim($plaintext);
  * ?>
  *
  * To disable using the mcrypt library, define the CRYPT_BLOWFISH_NOMCRYPT
@@ -70,7 +76,8 @@ define('CRYPT_BLOWFISH_PHP',    3);
  * @category   Encryption
  * @package    Crypt_Blowfish
  * @author     Matthew Fonda <mfonda@php.net>
- * @copyright  2005 Matthew Fonda
+ * @author     Philippe Jausions <jausions@php.net>
+ * @copyright  2005-2006 Matthew Fonda
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
@@ -187,7 +194,6 @@ class Crypt_Blowfish
      * @return bool
      * @access public
      * @deprecated
-     * @see Crypt_Blowfish::_init()
      */
     function init()
     {
@@ -196,6 +202,9 @@ class Crypt_Blowfish
 
     /**
      * Encrypts a string
+     *
+     * Value is padded with NUL characters prior to encryption. You may
+     * need to trim or cast the type when you decrypt.
      *
      * @param string $plainText string of characters/bytes to encrypt
      * @return string|PEAR_Error Returns cipher text on success, PEAR_Error on failure
@@ -209,6 +218,9 @@ class Crypt_Blowfish
 
     /**
      * Decrypts an encrypted string
+     *
+     * The value was padded with NUL characters when encrypted. You may
+     * need to trim the result or cast its type.
      *
      * @param string $cipherText
      * @return string|PEAR_Error Returns plain text on success, PEAR_Error on failure
