@@ -34,8 +34,10 @@ require_once 'Crypt/Blowfish/PHP.php';
  *     echo $bf->getMessage();
  *     exit;
  * }
- * $bf->setKey('My secret key');
+ * $iv = 'abc123+=';
+ * $bf->setKey('My secret key', $iv);
  * $encrypted = $bf->encrypt('this is some example plain text');
+ * $bf->setKey('My secret key', $iv);
  * $plaintext = $bf->decrypt($encrypted);
  * echo "plain text: $plaintext";
  * ?>
