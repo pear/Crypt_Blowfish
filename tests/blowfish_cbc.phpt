@@ -79,7 +79,7 @@ foreach ($vectors as $data) {
             echo 'Error while encrypting: ' . $guess->getMessage() . "\n";
             continue;
         }
-        $guess = bin2hex($guess);
+        $guess = strtolower(bin2hex($guess));
 
         // Reset the key (mostly for mcrypt compatibility)
         $result = $b->setKey($key, $iv);
@@ -97,14 +97,14 @@ foreach ($vectors as $data) {
         printf("%s %s %s %-7s %s\n",
             $crypt,
             $guess,
-            bin2hex($reverse),
+            strtolower(bin2hex($reverse)),
             (($crypt == $guess)   ? 'OK' : 'BAD'),
             (($plain == $reverse) ? 'OK' : 'BAD')
         );
     }
 }
 
-echo 'Time: ' . (microtime(true) - $t) . "\n";
+//echo 'Time: ' . (microtime(true) - $t) . "\n";
 
 ?>
 --EXPECT--
