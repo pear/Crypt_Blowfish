@@ -103,12 +103,12 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
         $len = strlen($plainText);
         $plainText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
-        list($Xl, $Xr) = $this->_unpackN2(substr($plainText, 0, 8) ^ $this->_iv);
+        list(, $Xl, $Xr) = unpack('N2', substr($plainText, 0, 8) ^ $this->_iv);
         $this->_encipher($Xl, $Xr);
         $cipherText .= pack('N2', $Xl, $Xr);
 
         for ($i = 8; $i < $len; $i += 8) {
-            list($Xl, $Xr) = $this->_unpackN2(substr($plainText, $i, 8) ^ substr($cipherText, $i - 8, 8));
+            list(, $Xl, $Xr) = unpack('N2', substr($plainText, $i, 8) ^ substr($cipherText, $i - 8, 8));
             $this->_encipher($Xl, $Xr);
             $cipherText .= pack('N2', $Xl, $Xr);
         }
@@ -140,12 +140,12 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
         $len = strlen($cipherText);
         $cipherText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
-        list($Xl, $Xr) = $this->_unpackN2(substr($cipherText, 0, 8));
+        list(, $Xl, $Xr) = unpack('N2', substr($cipherText, 0, 8));
         $this->_decipher($Xl, $Xr);
         $plainText .= (pack('N2', $Xl, $Xr) ^ $this->_iv);
 
         for ($i = 8; $i < $len; $i += 8) {
-            list($Xl, $Xr) = $this->_unpackN2(substr($cipherText, $i, 8));
+            list(, $Xl, $Xr) = unpack('N2', substr($cipherText, $i, 8));
             $this->_decipher($Xl, $Xr);
             $plainText .= (pack('N2', $Xl, $Xr) ^ substr($cipherText, $i - 8, 8));
         }
