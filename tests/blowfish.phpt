@@ -16,55 +16,57 @@ $vectors = file(dirname(__FILE__) . '/vectors.txt');
 require_once 'Crypt/Blowfish.php';
 $b =& Crypt_Blowfish::factory('ecb', null, null, CRYPT_BLOWFISH_PHP);
 if (PEAR::isError($b)) {
-    echo 'Error: ' . $result->getMessage() . "\n";
-}
+    echo 'Error: ' . $b->getMessage() . "\n";
 
-foreach($vectors as $data) {
-    $data = trim($data);
-    if ($data) {
-        list($key, $plain, $crypt) = split('[[:space:]]+', $data);
-        printf('%s %s ',
-            $key,
-            $plain
-        );
-        $key = hex2bin(trim($key));
-        $plain = hex2bin(($plain));
-        $crypt = strtolower(trim($crypt));
-        $result = $b->setKey($key);
-        if (PEAR::isError($result)) {
-            echo 'Error with key: ' . $result->getMessage() . "\n";
-            continue;
+} else {
+    foreach($vectors as $data) {
+        $data = trim($data);
+        if ($data) {
+            list($key, $plain, $crypt) = split('[[:space:]]+', $data);
+            printf('%s %s ',
+                $key,
+                $plain
+            );
+            $key = hex2bin(trim($key));
+            $plain = hex2bin(($plain));
+            $crypt = strtolower(trim($crypt));
+            $result = $b->setKey($key);
+            if (PEAR::isError($result)) {
+                echo 'Error with key: ' . $result->getMessage() . "\n";
+                continue;
+            }
+
+            $guess = $b->encrypt($plain);
+            if (PEAR::isError($guess)) {
+                echo 'Error while encrypting: ' . $guess->getMessage() . "\n";
+                continue;
+            }
+            $guess = strtolower(bin2hex($guess));
+
+            // Reset the key (mostly for mcrypt compatibility)
+            $result = $b->setKey($key);
+            if (PEAR::isError($result)) {
+                echo 'Error with key: ' . $result->getMessage() . "\n";
+                continue;
+            }
+
+            $reverse = $b->decrypt(hex2bin($crypt));
+            if (PEAR::isError($guess)) {
+                echo 'Error while decrypting: ' . $guess->getMessage() . "\n";
+                continue;
+            }
+
+            printf("%s %s %s %-7s %s\n",
+                $crypt,
+                $guess,
+                strtolower(bin2hex($reverse)),
+                (($crypt == $guess)   ? 'OK' : 'BAD'),
+                (($plain == $reverse) ? 'OK' : 'BAD')
+            );
         }
-
-        $guess = $b->encrypt($plain);
-        if (PEAR::isError($guess)) {
-            echo 'Error while encrypting: ' . $guess->getMessage() . "\n";
-            continue;
-        }
-        $guess = strtolower(bin2hex($guess));
-
-        // Reset the key (mostly for mcrypt compatibility)
-        $result = $b->setKey($key);
-        if (PEAR::isError($result)) {
-            echo 'Error with key: ' . $result->getMessage() . "\n";
-            continue;
-        }
-
-        $reverse = $b->decrypt(hex2bin($crypt));
-        if (PEAR::isError($guess)) {
-            echo 'Error while decrypting: ' . $guess->getMessage() . "\n";
-            continue;
-        }
-
-        printf("%s %s %s %-7s %s\n",
-            $crypt,
-            $guess,
-            strtolower(bin2hex($reverse)),
-            (($crypt == $guess)   ? 'OK' : 'BAD'),
-            (($plain == $reverse) ? 'OK' : 'BAD')
-        );
     }
 }
+
 ?>
 --EXPECT--
 key              plain            expected crypt   actual crypt     actual decrypt   encrypt decrypt
