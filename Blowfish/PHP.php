@@ -1,4 +1,5 @@
 <?php
+
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 
 /**
@@ -29,6 +30,15 @@
  * Include base class
  */
 require_once 'Crypt/Blowfish.php';
+
+/**
+ * Detect problem with XOR on some operating systems
+ */
+if (((-1 * 0xffffffff) ^ 0x7fffffff) == -1) {
+    define('CRYPT_BLOWFISH_PHP_XORWORKAROUND', true);
+} else {
+    define('CRYPT_BLOWFISH_PHP_XORWORKAROUND', false);
+}
 
 /**
  * Common class for PHP-only implementations
@@ -84,21 +94,6 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         $this->_iv = $iv . ((strlen($iv) < 8)
                             ? str_repeat(chr(0), 8 - strlen($iv)) : '');
         $this->setKey($key, $this->_iv);
-    }
-
-    /**
-     * Unpack fix for unsigned 32-bit to stay unsigned 32-bit
-     *
-     * @param string $input 8-character (bytes) long string
-     * @return array with high and low unsigned 32-bit values
-     * @access protected
-     */
-    function _unpackN2($input)
-    {
-        list(, $Xl, $Xr) = unpack('N2', $input);
-        return array(
-            ($Xl < 0) ? ($Xl + 4294967296) : $Xl,
-            ($Xr < 0) ? ($Xr + 4294967296) : $Xr);
     }
 
     /**
@@ -194,6 +189,7 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         }
 
         // If same key passed, no need to re-initialize internal arrays.
+        // @todo This needs to be worked out better...
         if ($keyHash == md5($key)) {
             return true;
         }
