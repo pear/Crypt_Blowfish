@@ -34,7 +34,7 @@ require_once 'Crypt/Blowfish.php';
 /**
  * Detect problem with XOR on some operating systems
  */
-if (((-1 * 0xffffffff) ^ 0x7fffffff) == -1) {
+if (((-1 * 0xffffffff) ^ 0x7fffffff) < 0) {
     define('CRYPT_BLOWFISH_PHP_XORWORKAROUND', true);
 } else {
     define('CRYPT_BLOWFISH_PHP_XORWORKAROUND', false);
@@ -93,7 +93,9 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
     {
         $this->_iv = $iv . ((strlen($iv) < 8)
                             ? str_repeat(chr(0), 8 - strlen($iv)) : '');
-        $this->setKey($key, $this->_iv);
+        if (!is_null($key)) {
+            $this->setKey($key, $this->_iv);
+        }
     }
 
     /**
@@ -107,6 +109,39 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         $defaults = new Crypt_Blowfish_DefaultKey();
         $this->_P = $defaults->P;
         $this->_S = $defaults->S;
+    }
+
+    /**
+     * Workaround for XOR on certain systems
+     *
+     * @param integer|float $l
+     * @param integer|float $r
+     * @return float
+     * @access protected
+     */
+    function _binxor($l, $r)
+    {
+        $x = (($l < 0) ? (float)($l + 4294967296) : (float)$l)
+             ^ (($r < 0) ? (float)($r + 4294967296) : (float)$r);
+
+        return (float)(($x < 0) ? $x + 4294967296 : $x);
+    }
+
+    /**
+     * Unpack 2 32-bit integers, keeping them positive
+     *
+     * @param string $data
+     * @return array
+     * @access protected
+     */
+    function _unpackN2($data)
+    {
+        list(, $N1, $N2) = unpack('N2', $data);
+        //return array($N1, $N2);
+
+        return array(
+            (float)(($N1 < 0) ? $N1 + 4294967296 : $N1),
+            (float)(($N2 < 0) ? $N2 + 4294967296 : (float)$N2));
     }
 
     /**
@@ -131,7 +166,6 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         $Xl = $temp ^ $this->_P[17];
     }
 
-
     /**
      * Deciphers a single 64-bit block
      *
@@ -152,6 +186,86 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         }
         $Xr = $Xl ^ $this->_P[1];
         $Xl = $temp ^ $this->_P[0];
+    }
+
+    /**
+     * Enciphers a single 64-bit block
+     *
+     * Enciphers using the internal _binxor() method
+     *
+     * @param int &$Xl
+     * @param int &$Xr
+     * @access protected
+     */
+    function _encipher2(&$Xl, &$Xr)
+    {
+        if ($Xl < 0) {
+            $Xl += 4294967296;
+        }
+        if ($Xr < 0) {
+            $Xr += 4294967296;
+        }
+
+        for ($i = 0; $i < 16; $i++) {
+            $temp = $Xl ^ $this->_P[$i];
+            if ($temp < 0) {
+                $temp += 4294967296;
+            }
+
+            $Xl = ((($this->_S[0][($temp >> 24) & 255]
+                     + $this->_S[1][($temp >> 16) & 255]
+                    ) ^ $this->_S[2][($temp >> 8) & 255]
+                   ) + $this->_S[3][$temp & 255]
+                  ) ^ $Xr;
+/*            $Xl = $this->_binxor(
+                    $this->_binxor($this->_S[0][($temp >> 24) & 255]
+                                     + $this->_S[1][($temp >> 16) & 255]
+                                   , $this->_S[2][($temp >> 8) & 255]
+                   ) + $this->_S[3][$temp & 255], $Xr); */
+            $Xr = $temp;
+        }
+        $Xr = $this->_binxor($Xl, $this->_P[16]);
+        $Xl = $this->_binxor($temp, $this->_P[17]);
+    }
+
+    /**
+     * Deciphers a single 64-bit block
+     *
+     * Deciphers using the internal _binxor() method
+     *
+     * @param int &$Xl
+     * @param int &$Xr
+     * @access protected
+     */
+    function _decipher2(&$Xl, &$Xr)
+    {
+        if ($Xl < 0) {
+            $Xl += 4294967296;
+        }
+        if ($Xr < 0) {
+            $Xr += 4294967296;
+        }
+
+        for ($i = 17; $i > 1; $i--) {
+            $temp = $Xl ^ $this->_P[$i];
+            if ($temp < 0) {
+                $temp += 4294967296;
+            }
+
+            $Xl = ((($this->_S[0][($temp >> 24) & 255]
+                     + $this->_S[1][($temp >> 16) & 255]
+                    ) ^ $this->_S[2][($temp >> 8) & 255]
+                   ) + $this->_S[3][$temp & 255]
+                  ) ^ $Xr;
+/*            $Xl = $this->_binxor(
+                    $this->_binxor($this->_S[0][($temp >> 24) & 255]
+                                    + $this->_S[1][($temp >> 16) & 255]
+                                   , $this->_S[2][($temp >> 8) & 255]
+                   ) + $this->_S[3][$temp & 255], $Xr); */
+            $Xr = $temp;
+        }
+        $Xr = $this->_binxor($Xl, $this->_P[1]);
+        $Xl = $this->_binxor($temp, $this->_P[0]);
     }
 
     /**
@@ -194,6 +308,9 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
             return true;
         }
 
+        $funcName = (CRYPT_BLOWFISH_PHP_XORWORKAROUND)
+                    ? '_encipher2' : '_encipher2';
+
         $this->_init();
 
         $k = 0;
@@ -211,27 +328,27 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
         }
 
         for ($i = 0; $i <= 16; $i += 2) {
-            $this->_encipher($datal, $datar);
+            $this->{$funcName}($datal, $datar);
             $this->_P[$i] = $datal;
             $this->_P[$i+1] = $datar;
         }
         for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
+            $this->{$funcName}($datal, $datar);
             $this->_S[0][$i] = $datal;
             $this->_S[0][$i+1] = $datar;
         }
         for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
+            $this->{$funcName}($datal, $datar);
             $this->_S[1][$i] = $datal;
             $this->_S[1][$i+1] = $datar;
         }
         for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
+            $this->{$funcName}($datal, $datar);
             $this->_S[2][$i] = $datal;
             $this->_S[2][$i+1] = $datar;
         }
         for ($i = 0; $i < 256; $i += 2) {
-            $this->_encipher($datal, $datar);
+            $this->{$funcName}($datal, $datar);
             $this->_S[3][$i] = $datal;
             $this->_S[3][$i+1] = $datar;
         }

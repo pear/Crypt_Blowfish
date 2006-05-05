@@ -54,7 +54,9 @@ if (PEAR::isError($b)) {
     echo 'Error: ' . $b->getMessage() . "\n";
 
 } else {
-    $t = microtime(true);
+    list($m, $t1) = explode(' ', microtime());
+    $t1 += $m;
+
     foreach ($vectors as $data) {
         $data = trim($data);
         if ($data) {
@@ -103,7 +105,10 @@ if (PEAR::isError($b)) {
             );
         }
     }
-    //echo 'Time: ' . (microtime(true) - $t) . "\n";
+    list($m, $t2) = explode(' ', microtime());
+    $t2 += $m;
+
+    //echo 'Time: ' . ($t2 - $t1) . "\n";
 }
 
 ?>
