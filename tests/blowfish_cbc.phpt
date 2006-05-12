@@ -72,7 +72,7 @@ if (PEAR::isError($b)) {
             $crypt = strtolower(trim($crypt));
             $result = $b->setKey($key, $iv);
             if (PEAR::isError($result)) {
-                echo 'Error with key/VI: ' . $result->getMessage() . "\n";
+                echo 'Error with key/IV: ' . $result->getMessage() . "\n";
                 continue;
             }
 
@@ -86,7 +86,7 @@ if (PEAR::isError($b)) {
             // Reset the key (mostly for mcrypt compatibility)
             $result = $b->setKey($key, $iv);
             if (PEAR::isError($result)) {
-                echo 'Error with key/VI: ' . $result->getMessage() . "\n";
+                echo 'Error with key/IV: ' . $result->getMessage() . "\n";
                 continue;
             }
 
