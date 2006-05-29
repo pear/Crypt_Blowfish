@@ -20,6 +20,7 @@
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Crypt_Blowfish
+ * @since      1.1.0
  */
 
 /**
@@ -29,7 +30,7 @@ require_once 'Crypt/Blowfish/PHP.php';
 
 /**
  * Example
- * <?php
+ * <code>
  * $bf =& Crypt_Blowfish::factory('cbc');
  * if (PEAR::isError($bf)) {
  *     echo $bf->getMessage();
@@ -41,7 +42,7 @@ require_once 'Crypt/Blowfish/PHP.php';
  * $bf->setKey('My secret key', $iv);
  * $plaintext = $bf->decrypt($encrypted);
  * echo "plain text: $plaintext";
- * ?>
+ * <code>
  *
  * @category   Encryption
  * @package    Crypt_Blowfish
@@ -52,6 +53,7 @@ require_once 'Crypt/Blowfish/PHP.php';
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
  * @access     public
+ * @since      1.1.0
  */
 class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
 {

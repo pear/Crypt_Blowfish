@@ -3,9 +3,9 @@
 
 /**
  * Crypt_Blowfish allows for encryption and decryption on the fly using
- * the Blowfish algorithm. Crypt_Blowfish does not require the mcrypt
+ * the Blowfish algorithm. Crypt_Blowfish does not require the MCrypt
  * PHP extension, but uses it if available, otherwise it uses only PHP.
- * Crypt_Blowfish support encryption/decryption with or without a secret key.
+ * Crypt_Blowfish supports encryption/decryption with or without a secret key.
  *
  *
  * PHP versions 4 and 5
@@ -35,30 +35,34 @@ require_once 'PEAR.php';
  */
 /**
  * To let the Crypt_Blowfish package decide which engine to use
+ * @since 1.1.0
  */
 define('CRYPT_BLOWFISH_AUTO',   1);
 /**
  * To use the MCrypt PHP extension.
+ * @since 1.1.0
  */
 define('CRYPT_BLOWFISH_MCRYPT', 2);
 /**
  * To use the PHP-only engine.
+ * @since 1.1.0
  */
 define('CRYPT_BLOWFISH_PHP',    3);
 
 
 /**
  * Example using the factory method in CBC mode
- * <?php
+ * <code>
  * $bf =& Crypt_Blowfish::factory('cbc');
  * if (PEAR::isError($bf)) {
  *     echo $bf->getMessage();
  *     exit;
  * }
  * $iv = 'abc123+=';
- * $bf->setKey('My secret key', $iv);
+ * $key = 'My secret key';
+ * $bf->setKey($key, $iv);
  * $encrypted = $bf->encrypt('this is some example plain text');
- * $bf->setKey('My secret key', $iv);
+ * $bf->setKey($key, $iv);
  * $plaintext = $bf->decrypt($encrypted);
  * if (PEAR::isError($plaintext)) {
  *     echo $plaintext->getMessage();
@@ -67,14 +71,14 @@ define('CRYPT_BLOWFISH_PHP',    3);
  * // Encrypted text is padded prior to encryption
  * // so you may need to trim the decrypted result.
  * echo 'plain text: ' . trim($plaintext);
- * ?>
+ * </code>
  *
  * To disable using the mcrypt library, define the CRYPT_BLOWFISH_NOMCRYPT
  * constant. This is useful for instance on Windows platform with a buggy
  * mdecrypt_generic() function.
- * <?php
+ * <code>
  * define('CRYPT_BLOWFISH_NOMCRYPT', true);
- * ?>
+ * </code>
  *
  * @category   Encryption
  * @package    Crypt_Blowfish
@@ -135,7 +139,7 @@ class Crypt_Blowfish
      *
      * @param string $key
      * @access public
-     * @deprecated
+     * @deprecated Since 1.1.0
      * @see Crypt_Blowfish::factory()
      */
     function Crypt_Blowfish($key)
@@ -151,14 +155,18 @@ class Crypt_Blowfish
      *
      * This is the recommended method to create a Crypt_Blowfish instance.
      *
+     * When using CRYPT_BLOWFISH_AUTO, you can force the package to ignore
+     * the MCrypt extension, by defining CRYPT_BLOWFISH_NOMCRYPT.
+     *
      * @param string $mode operating mode 'ecb' or 'cbc' (case insensitive)
      * @param string $key
      * @param string $iv initialization vector (must be provided for CBC mode)
      * @param integer $engine one of CRYPT_BLOWFISH_AUTO, CRYPT_BLOWFISH_PHP
      *                or CRYPT_BLOWFISH_MCRYPT
-     * @return mixed Crypt_Blowfish object or PEAR_Error object on error
-     * @static
+     * @return object Crypt_Blowfish object or PEAR_Error object on error
      * @access public
+     * @static
+     * @since 1.1.0
      */
     function &factory($mode = 'ecb', $key = null, $iv = null, $engine = CRYPT_BLOWFISH_AUTO)
     {
@@ -203,10 +211,11 @@ class Crypt_Blowfish
     }
 
     /**
-     * Returns block size
+     * Returns the algorithm's block size
      *
      * @return integer
      * @access public
+     * @since 1.1.0
      */
     function getBlockSize()
     {
@@ -214,10 +223,11 @@ class Crypt_Blowfish
     }
 
     /**
-     * Returns IV size
+     * Returns the algorithm's IV size
      *
      * @return integer
      * @access public
+     * @since 1.1.0
      */
     function getIVSize()
     {
@@ -225,10 +235,11 @@ class Crypt_Blowfish
     }
 
     /**
-     * Returns maximum key size
+     * Returns the algorithm's maximum key size
      *
      * @return integer
      * @access public
+     * @since 1.1.0
      */
     function getMaxKeySize()
     {
@@ -266,7 +277,7 @@ class Crypt_Blowfish
      * Value is padded with NUL characters prior to encryption. You may
      * need to trim or cast the type when you decrypt.
      *
-     * @param string $plainText string of characters/bytes to encrypt
+     * @param string $plainText the string of characters/bytes to encrypt
      * @return string|PEAR_Error Returns cipher text on success, PEAR_Error on failure
      * @access public
      */
@@ -282,7 +293,7 @@ class Crypt_Blowfish
      * The value was padded with NUL characters when encrypted. You may
      * need to trim the result or cast its type.
      *
-     * @param string $cipherText
+     * @param string $cipherText the binary string to decrypt
      * @return string|PEAR_Error Returns plain text on success, PEAR_Error on failure
      * @access public
      */
@@ -296,7 +307,7 @@ class Crypt_Blowfish
      * The key must be non-zero, and less than or equal to
      * 56 characters (bytes) in length.
      *
-     * If you are making use of the PHP mcrypt extension, you must call this
+     * If you are making use of the PHP MCrypt extension, you must call this
      * method before each encrypt() and decrypt() call.
      *
      * @param string $key

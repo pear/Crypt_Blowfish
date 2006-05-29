@@ -20,6 +20,7 @@
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Crypt_Blowfish
+ * @since      1.1.0
  */
 
 /**
@@ -30,19 +31,20 @@ require_once 'Crypt/Blowfish.php';
 /**
  * Example using the factory method in CBC mode and forcing using
  * the MCrypt library.
- * <?php
+ * <code>
  * $bf =& Crypt_Blowfish::factory('cbc', null, null, CRYPT_BLOWFISH_MCRYPT);
  * if (PEAR::isError($bf)) {
  *     echo $bf->getMessage();
  *     exit;
  * }
  * $iv = 'abc123+=';
- * $bf->setKey('My secret key', $iv);
+ * $key = 'My secret key';
+ * $bf->setKey($key, $iv);
  * $encrypted = $bf->encrypt('this is some example plain text');
- * $bf->setKey('My secret key', $iv);
+ * $bf->setKey($key, $iv);
  * $plaintext = $bf->decrypt($encrypted);
  * echo "plain text: $plaintext";
- * ?>
+ * </code>
  *
  * @category   Encryption
  * @package    Crypt_Blowfish
@@ -53,6 +55,7 @@ require_once 'Crypt/Blowfish.php';
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
  * @access     public
+ * @since      1.1.0
  */
 class Crypt_Blowfish_MCrypt extends Crypt_Blowfish
 {

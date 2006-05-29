@@ -21,16 +21,17 @@
   </maintainer>
  </maintainers>
  <release>
-  <version>1.1.0</version>
-  <date>2006-04-20</date>
+  <version>1.1.0RC1</version>
+  <date>2006-05-28</date>
   <state>beta</state>
   <notes>* Added CBC mode support (Req #7256)
-* Added factory() pattern (prefered method to create instance)
+* Added factory() pattern (now prefered method to create instance)
 * Deprecated Crypt_Blowfish() constructor
 * Reorganized code into subclasses for PHP-only (ECB &amp; CBC modes) and MCrypt implementations
 * Ability to disable the use of the MCrypt extension if needed (Req #7298)
 * Now returns PEAR_Error objects instead of dying (Req #4555)
-* Catch initialization problem in constructor (Bug #7299)</notes>
+* Catch initialization problem in constructor (Bug #7299)
+* Fix for XOR problem with floats on some systems (Bug #6159)</notes>
   <filelist>
    <dir name="/" baseinstalldir="Crypt">
     <file name="Blowfish.php" role="php"><replace from="@package_version@" to="version" type="package-info" /></file>
@@ -52,16 +53,17 @@
  </release>
   <changelog>
 	<release>
-     <version>1.1.0</version>
-     <date>2006-04-20</date>
+     <version>1.1.0RC1</version>
+     <date>2006-05-28</date>
      <state>beta</state>
   <notes>* Added CBC mode support (Req #7256)
-* Added factory() pattern (prefered method to create instance)
+* Added factory() pattern (now prefered method to create instance)
 * Deprecated Crypt_Blowfish() constructor
 * Reorganized code into subclasses for PHP-only (ECB &amp; CBC modes) and MCrypt implementations
 * Ability to disable the use of the MCrypt extension if needed (Req #7298)
 * Now returns PEAR_Error objects instead of dying (Req #4555)
-* Catch initialization problem in constructor (Bug #7299)</notes>
+* Catch initialization problem in constructor (Bug #7299)
+* Fix for XOR problem with floats on some systems (Bug #6159)</notes>
 	</release>
     <release>
      <version>1.0.1</version>

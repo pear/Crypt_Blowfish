@@ -24,6 +24,7 @@
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Crypt_Blowfish
+ * @since      1.1.0
  */
 
 /**
@@ -43,6 +44,7 @@ require_once 'Crypt/Blowfish.php';
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
  * @access     public
+ * @since      1.1.0
  */
 class Crypt_Blowfish_PHP extends Crypt_Blowfish
 {
