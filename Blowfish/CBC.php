@@ -22,9 +22,10 @@
  * @link       http://pear.php.net/package/Crypt_Blowfish
  */
 
-
+/**
+ * Required parent class
+ */
 require_once 'Crypt/Blowfish/PHP.php';
-
 
 /**
  * Example
@@ -34,7 +35,7 @@ require_once 'Crypt/Blowfish/PHP.php';
  *     echo $bf->getMessage();
  *     exit;
  * }
- * $iv = 'abc123+=';
+ * $iv = 'abc123@%';
  * $bf->setKey('My secret key', $iv);
  * $encrypted = $bf->encrypt('this is some example plain text');
  * $bf->setKey('My secret key', $iv);
@@ -99,28 +100,22 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
             return PEAR::raiseError('The key is not initialized.', 8);
         }
 
-        $funcName = (CRYPT_BLOWFISH_PHP_XORWORKAROUND)
-                    ? '_encipher2' : '_encipher2';
-
         $cipherText = '';
         $len = strlen($plainText);
         $plainText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
-        //list($Xl, $Xr) = $this->_unpackN2(substr($plainText, 0, 8) ^ $this->_iv);
         list(, $Xl, $Xr) = unpack('N2', substr($plainText, 0, 8) ^ $this->_iv);
-        $this->{$funcName}($Xl, $Xr);
+        $this->_encipher($Xl, $Xr);
         $cipherText .= pack('N2', $Xl, $Xr);
 
         for ($i = 8; $i < $len; $i += 8) {
-            //list($Xl, $Xr) = $this->_unpackN2(substr($plainText, $i, 8) ^ substr($cipherText, $i - 8, 8));
             list(, $Xl, $Xr) = unpack('N2', substr($plainText, $i, 8) ^ substr($cipherText, $i - 8, 8));
-            $this->{$funcName}($Xl, $Xr);
+            $this->_encipher($Xl, $Xr);
             $cipherText .= pack('N2', $Xl, $Xr);
         }
 
         return $cipherText;
     }
-
 
     /**
      * Decrypts an encrypted string
@@ -141,22 +136,17 @@ class Crypt_Blowfish_CBC extends Crypt_Blowfish_PHP
             return PEAR::raiseError('The key is not initialized.', 8);
         }
 
-        $funcName = (CRYPT_BLOWFISH_PHP_XORWORKAROUND)
-                    ? '_decipher2' : '_decipher2';
-
         $plainText = '';
         $len = strlen($cipherText);
         $cipherText .= str_repeat(chr(0), (8 - ($len % 8)) % 8);
 
-        //list($Xl, $Xr) = $this->_unpackN2(substr($cipherText, 0, 8));
         list(, $Xl, $Xr) = unpack('N2', substr($cipherText, 0, 8));
-        $this->{$funcName}($Xl, $Xr);
+        $this->_decipher($Xl, $Xr);
         $plainText .= (pack('N2', $Xl, $Xr) ^ $this->_iv);
 
         for ($i = 8; $i < $len; $i += 8) {
-            //list($Xl, $Xr) = $this->_unpackN2(substr($cipherText, $i, 8));
             list(, $Xl, $Xr) = unpack('N2', substr($cipherText, $i, 8));
-            $this->{$funcName}($Xl, $Xr);
+            $this->_decipher($Xl, $Xr);
             $plainText .= (pack('N2', $Xl, $Xr) ^ substr($cipherText, $i - 8, 8));
         }
 

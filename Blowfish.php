@@ -25,24 +25,27 @@
  * @link       http://pear.php.net/package/Crypt_Blowfish
  */
 
-
+/**
+ * Required PEAR package(s)
+ */
 require_once 'PEAR.php';
 
 /**
  * Engine choice constants
  */
 /**
- * To let Crypt_Blowfish package decide which engine to use
+ * To let the Crypt_Blowfish package decide which engine to use
  */
 define('CRYPT_BLOWFISH_AUTO',   1);
 /**
- * To use of the MCrypt PHP extension.
+ * To use the MCrypt PHP extension.
  */
 define('CRYPT_BLOWFISH_MCRYPT', 2);
 /**
- * To use of the PHP-only engine.
+ * To use the PHP-only engine.
  */
 define('CRYPT_BLOWFISH_PHP',    3);
+
 
 /**
  * Example using the factory method in CBC mode
@@ -100,6 +103,30 @@ class Crypt_Blowfish
      * @access protected
      */
     var $_iv = null;
+
+    /**
+     * Holds block size
+     *
+     * @var integer
+     * @access protected
+     */
+    var $_block_size = 8;
+
+    /**
+     * Holds IV size
+     *
+     * @var integer
+     * @access protected
+     */
+    var $_iv_size = 8;
+
+    /**
+     * Holds max key size
+     *
+     * @var integer
+     * @access protected
+     */
+    var $_key_size = 56;
 
     /**
      * Crypt_Blowfish Constructor
@@ -176,6 +203,39 @@ class Crypt_Blowfish
     }
 
     /**
+     * Returns block size
+     *
+     * @return integer
+     * @access public
+     */
+    function getBlockSize()
+    {
+        return $this->_block_size;
+    }
+
+    /**
+     * Returns IV size
+     *
+     * @return integer
+     * @access public
+     */
+    function getIVSize()
+    {
+        return $this->_iv_size;
+    }
+
+    /**
+     * Returns maximum key size
+     *
+     * @return integer
+     * @access public
+     */
+    function getMaxKeySize()
+    {
+        return $this->_key_size;
+    }
+
+    /**
      * Deprecated isReady method
      *
      * @return bool
@@ -247,7 +307,6 @@ class Crypt_Blowfish
     {
         return $this->_crypt->setKey($key);
     }
-
 }
 
 ?>
