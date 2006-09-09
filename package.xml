@@ -22,7 +22,7 @@
  </maintainers>
  <release>
   <version>1.1.0RC1</version>
-  <date>2006-05-28</date>
+  <date>2006-09-08</date>
   <state>beta</state>
   <notes>* Added CBC mode support (Req #7256)
 * Added factory() pattern (now prefered method to create instance)
@@ -54,7 +54,7 @@
   <changelog>
 	<release>
      <version>1.1.0RC1</version>
-     <date>2006-05-28</date>
+     <date>2006-09-08</date>
      <state>beta</state>
   <notes>* Added CBC mode support (Req #7256)
 * Added factory() pattern (now prefered method to create instance)
