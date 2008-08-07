@@ -71,6 +71,14 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
      * @access protected
      */
     var $_iv_required = false;
+    
+    /**
+     * Hash value of last used key
+     * 
+     * @var     string
+     * @access  protected
+     */
+    var $_keyHash = null;
 
     /**
      * Crypt_Blowfish_PHP Constructor
@@ -203,8 +211,6 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
      */
     function setKey($key, $iv = null)
     {
-        static $keyHash = null;
-
         if (!is_string($key)) {
             return PEAR::raiseError('Key must be a string', 2);
         }
@@ -222,9 +228,7 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
             $this->_iv = $iv;
         }
 
-        // If same key passed, no need to re-initialize internal arrays.
-        // @todo This needs to be worked out better...
-        if ($keyHash == md5($key)) {
+        if ($this->_keyHash == md5($key)) {
             return true;
         }
 
@@ -270,7 +274,7 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
             $this->_S[3][$i+1] = $datar;
         }
 
-        $keyHash = md5($key);
+        $this->_keyHash = md5($key);
         return true;
     }
 }
