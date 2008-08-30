@@ -7,20 +7,13 @@
  * PHP extension, it uses only PHP.
  * Crypt_Blowfish support encryption/decryption with or without a secret key.
  *
- *
  * PHP versions 4 and 5
- *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
  *
  * @category   Encryption
  * @package    Crypt_Blowfish
  * @author     Matthew Fonda <mfonda@php.net>
- * @copyright  2005 Matthew Fonda
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  2005-2008 Matthew Fonda
+ * @license    http://www.opensource.net/licenses/bsd-license.php New BSD
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Crypt_Blowfish
  */
@@ -32,11 +25,10 @@
  * @category   Encryption
  * @package    Crypt_Blowfish
  * @author     Matthew Fonda <mfonda@php.net>
- * @copyright  2005 Matthew Fonda
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  2005-2008 Matthew Fonda
+ * @license    http://www.opensource.net/licenses/bsd-license.php New BSD
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
- * @access     public
  */
 class Crypt_Blowfish_DefaultKey
 {

@@ -20,26 +20,20 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>jausions@php.net</email>
   <active>yes</active>
  </lead>
- <date>2008-08-07</date>
- <time>10:50:18</time>
+ <date>2008-08-30</date>
+ <time>17:41:18</time>
  <version>
-  <release>1.1.0RC1</release>
-  <api>1.1.0RC1</api>
+  <release>1.1.0RC2</release>
+  <api>1.1.0RC2</api>
  </version>
  <stability>
   <release>beta</release>
   <api>beta</api>
  </stability>
- <license uri="http://www.php.net/license">PHP</license>
- <notes>* Added CBC mode support (Req #7256)
-* Added factory() pattern (now prefered method to create instance)
-* Deprecated Crypt_Blowfish() constructor
-* Reorganized code into subclasses for PHP-only (ECB &amp; CBC modes) and MCrypt implementations
-* Ability to disable the use of the MCrypt extension if needed (Req #7298)
-* Now returns PEAR_Error objects instead of dying (Req #4555)
-* Catch initialization problem in constructor (Bug #7299)
-* Fix for XOR problem with floats on some systems (Bug #6159)
- </notes>
+ <license uri="http://www.opensource.net/licenses/bsd-license.php">New BSD</license>
+    <notes>* Bump to package.xml v2.0
+* Algorithm tweak for bug #12906 and bug #10162
+* Switch to new BSD license from PHP 3.0 license</notes>
  <contents>
   <dir name="/">
    <dir name="Blowfish">
@@ -73,19 +67,34 @@ http://pear.php.net/dtd/package-2.0.xsd">
  <dependencies>
   <required>
    <php>
-    <min>4.0.0</min>
+    <min>4.2.0</min>
    </php>
    <pearinstaller>
-    <min>1.4.0b1</min>
+    <min>1.7.2</min>
    </pearinstaller>
   </required>
  </dependencies>
  <phprelease />
  <changelog>
   <release>
+    <version>
+        <release>1.1.0RC2</release>
+        <api>1.1.0RC2</api>
+    </version>
+    <stability>
+        <release>snapshot</release>
+        <api>devel</api>
+    </stability>
+    <date>2008-08-30</date>
+    <license uri="http://www.opensource.net/licenses/bsd-license.php">New BSD</license>
+    <notes>* Bump to package.xml v2.0
+* Algorithm tweak for bug #12906 and bug #10162
+* Switch to new BSD license from PHP 3.0 license</notes>
+  </release>
+ <release>
    <version>
-    <release>1.1.0RC2</release>
-    <api>1.1.0RC2</api>
+    <release>1.1.0RC1</release>
+    <api>1.1.0RC1</api>
    </version>
    <stability>
     <release>beta</release>
@@ -176,5 +185,5 @@ http://pear.php.net/dtd/package-2.0.xsd">
    <notes>This is the initial release.
    </notes>
   </release>
- </changelog>
+  </changelog>
 </package>

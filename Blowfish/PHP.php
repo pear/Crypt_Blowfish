@@ -10,18 +10,12 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: This source file is subject to version 3.0 of the PHP license
- * that is available through the world-wide-web at the following URI:
- * http://www.php.net/license/3_0.txt.  If you did not receive a copy of
- * the PHP License and are unable to obtain it through the web, please
- * send a note to license@php.net so we can mail you a copy immediately.
- *
  * @category   Encryption
  * @package    Crypt_Blowfish
  * @author     Matthew Fonda <mfonda@php.net>
  * @author     Philippe Jausions <jausions@php.net>
- * @copyright  2005-2006 Matthew Fonda
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  2005-2008 Matthew Fonda
+ * @license    http://www.opensource.net/licenses/bsd-license.php New BSD
  * @version    CVS: $Id$
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @since      1.1.0
@@ -39,11 +33,10 @@ require_once 'Crypt/Blowfish.php';
  * @package    Crypt_Blowfish
  * @author     Matthew Fonda <mfonda@php.net>
  * @author     Philippe Jausions <jausions@php.net>
- * @copyright  2005-2006 Matthew Fonda
- * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
+ * @copyright  2005-2008 Matthew Fonda
+ * @license    http://www.opensource.net/licenses/bsd-license.php New BSD
  * @link       http://pear.php.net/package/Crypt_Blowfish
  * @version    @package_version@
- * @access     public
  * @since      1.1.0
  */
 class Crypt_Blowfish_PHP extends Crypt_Blowfish
@@ -151,11 +144,10 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
                 $temp += 4294967296;
             }
 
-            $Xl = ((($this->_S[0][($temp >> 24) & 255]
-                     + $this->_S[1][($temp >> 16) & 255]
-                    ) ^ $this->_S[2][($temp >> 8) & 255]
-                   ) + $this->_S[3][$temp & 255]
-                  ) ^ $Xr;
+            $Xl = fmod((fmod($this->_S[0][($temp >> 24) & 255]
+                             + $this->_S[1][($temp >> 16) & 255], 4294967296) 
+                        ^ $this->_S[2][($temp >> 8) & 255]) 
+                       + $this->_S[3][$temp & 255], 4294967296) ^ $Xr;
             $Xr = $temp;
         }
         $Xr = $this->_binxor($Xl, $this->_P[16]);
@@ -184,11 +176,10 @@ class Crypt_Blowfish_PHP extends Crypt_Blowfish
                 $temp += 4294967296;
             }
 
-            $Xl = ((($this->_S[0][($temp >> 24) & 255]
-                     + $this->_S[1][($temp >> 16) & 255]
-                    ) ^ $this->_S[2][($temp >> 8) & 255]
-                   ) + $this->_S[3][$temp & 255]
-                  ) ^ $Xr;
+            $Xl = fmod((fmod($this->_S[0][($temp >> 24) & 255]
+                             + $this->_S[1][($temp >> 16) & 255], 4294967296) 
+                        ^ $this->_S[2][($temp >> 8) & 255]) 
+                       + $this->_S[3][$temp & 255], 4294967296) ^ $Xr;
             $Xr = $temp;
         }
         $Xr = $this->_binxor($Xl, $this->_P[1]);
